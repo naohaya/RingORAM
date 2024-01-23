@@ -63,6 +63,20 @@ public class Client implements ClientInterface{
 		System.out.println("client INIT server successful!" + responseBytes[0]);
 		responseBytes = null;
 	}
+
+	/* for closing ThreadExecutor
+	 * 
+	 */
+	public void close() {
+		// TODO Auto-generated method stub
+		try {
+			mChannel.close();
+			mThreadGroup.shutdown();
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
 	
 	/* core operation in ring oram
 	 * @param blockIndex: block unique index
@@ -383,6 +397,7 @@ public class Client implements ClientInterface{
 				System.out.println("can't find block "+i+" in server storage");
 			}
 		}
+		client.close(); // close the ThreadExecutor.
 	}
 
 }

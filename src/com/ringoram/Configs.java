@@ -38,5 +38,5 @@ public class Configs {
 	public enum OPERATION{ORAM_ACCESS_READ,ORAM_ACCESS_WRITE};
 	
 	//bucket store source
-	public static String STORAGE_PATH = "/home/hadoop/eclipse/RingORAM/serverData/bucket_";
+	public static String STORAGE_PATH = "./serverStorage/bucket_";
 }
