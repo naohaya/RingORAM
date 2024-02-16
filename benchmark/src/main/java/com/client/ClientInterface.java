@@ -1,5 +1,7 @@
 package com.client;
 
+import com.ringoram.BucketMetadata;
+
 public interface ClientInterface {
 
 	/*when read or write block, first read path from server
