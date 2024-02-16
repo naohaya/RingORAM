@@ -1,17 +1,16 @@
 package com.client;
 
-import com.pathoram.Bucket;
-
 public interface ClientInterface {
-	//client operation includes read and write
-	public enum Operation {READ, WRITE};
 
-	public void initServer();//initialize server
+	/*when read or write block, first read path from server
+	 * @param pathID: path that need to get from server
+	 * @param blockIndex: block that want to request
+	 */
+	public void read_path(int pathID, int blockIndex);
 	
-	public void readPath(int pathID);//read path
+	//when request time reaches shuffle rate, evict path
+	public void evict_path(int pathID);
 	
-	public void writePath(int pathID,Bucket[] bucket_list);//write path
-	
-	public void close();//close connect
-	
+	//when block in bucket almost all accessed, early re-shuffle the bucket
+	public void early_reshuffle(int pathID, BucketMetadata[] meta_list);
 }
