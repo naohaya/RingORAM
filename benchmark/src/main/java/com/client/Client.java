@@ -28,6 +28,7 @@ import org.openjdk.jmh.runner.RunnerException;
 import org.openjdk.jmh.runner.options.Options;
 import org.openjdk.jmh.runner.options.OptionsBuilder;
 
+@State(Scope.Thread)
 public class Client implements ClientInterface{
 
 	private static int requestID = 0;
