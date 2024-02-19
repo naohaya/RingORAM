@@ -37,6 +37,8 @@ public class Client implements ClientInterface{
 	protected AsynchronousChannelGroup mThreadGroup;
 	protected AsynchronousSocketChannel mChannel;
 
+	protected Client client = null; // it should be global.
+
 	private int evict_count;
 	private int evict_g;
 	private int[] position_map;
@@ -390,7 +392,7 @@ public class Client implements ClientInterface{
 	// setup for a benchmark
 	@Setup
 	public void prepare(){
-		Client client = new Client();
+		client = new Client();
 		client.initServer();
 
 		/* Warmup loop (write something) */
