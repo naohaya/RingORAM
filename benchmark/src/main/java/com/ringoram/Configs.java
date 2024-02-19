@@ -1,5 +1,10 @@
 package com.ringoram;
 
+import org.openjdk.jmh.annotations.Benchmark;
+import org.openjdk.jmh.annotations.State;
+import org.openjdk.jmh.annotations.Scope;
+
+@State(Scope.Thread)
 public class Configs {
 	// thread fixed number
 	public static int THREAD_FIXED = 4;
