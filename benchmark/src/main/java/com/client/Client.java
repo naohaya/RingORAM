@@ -15,6 +15,19 @@ import com.google.common.primitives.Ints;
 import com.ringoram.*;
 import com.ringoram.Configs.OPERATION;
 
+/* import for jmh */
+import org.openjdk.jmh.annotations.Benchmark;
+import org.openjdk.jmh.annotations.Level;
+import org.openjdk.jmh.annotations.Mode;
+import org.openjdk.jmh.annotations.Scope;
+import org.openjdk.jmh.annotations.Setup;
+import org.openjdk.jmh.annotations.State;
+import org.openjdk.jmh.annotations.TearDown;
+import org.openjdk.jmh.runner.Runner;
+import org.openjdk.jmh.runner.RunnerException;
+import org.openjdk.jmh.runner.options.Options;
+import org.openjdk.jmh.runner.options.OptionsBuilder;
+
 public class Client implements ClientInterface{
 
 	private static int requestID = 0;
@@ -371,10 +384,15 @@ public class Client implements ClientInterface{
 		}
 		return responseBytes;
 	}
-	public static void main(String[] args) {
-		// TODO Auto-generated method stub
+
+	/* Benchmark related methods */
+	// setup for a benchmark
+	@Setup
+	public void prepare(){
 		Client client = new Client();
 		client.initServer();
+
+		/* Warmup loop (write something) */
 		for(int i=0;i<4;i++){
 			byte[] data = new byte[Configs.BLOCK_DATA_LEN];
 			Arrays.fill(data, (byte)i);
@@ -383,6 +401,24 @@ public class Client implements ClientInterface{
 		byte[] newdata = new byte[Configs.BLOCK_DATA_LEN];
 		Arrays.fill(newdata, (byte)12);
 		client.oblivious_access(3, OPERATION.ORAM_ACCESS_WRITE, newdata);
+
+
+	}
+
+	// main method for the benchmark
+	@Benchmark
+	public void operation(){
+		/* Write operation */
+		for(int i=0;i<4;i++){
+			byte[] data = new byte[Configs.BLOCK_DATA_LEN];
+			Arrays.fill(data, (byte)i);
+			client.oblivious_access(i, OPERATION.ORAM_ACCESS_WRITE, data);
+		}
+		byte[] newdata = new byte[Configs.BLOCK_DATA_LEN];
+		Arrays.fill(newdata, (byte)12);
+		client.oblivious_access(3, OPERATION.ORAM_ACCESS_WRITE, newdata);
+
+		/* Read operation */
 		for(int i=0;i<4;i++){
 			byte[] data = new byte[Configs.BLOCK_DATA_LEN];
 			//Arrays.fill(data, (byte)1);
@@ -397,7 +433,27 @@ public class Client implements ClientInterface{
 				System.out.println("can't find block "+i+" in server storage");
 			}
 		}
-		client.close(); // close the ThreadExecutor.
 	}
+
+	// finalizing the benchmark
+	@TearDown
+	public void tearDown() {
+		client.close();
+	}
+
+
+	
+	public static void main(String[] args) throws RunnerException {
+		Options opt = new OptionsBuilder()
+			.include(Client.class.getSimpleName())
+			.warmupIterations(1)
+			.measurementIterations(1)
+			.forks(1)
+			.mode(Mode.Throughput)
+			.build();
+		new Runner(opt).run();
+
+	}
+	
 
 }
