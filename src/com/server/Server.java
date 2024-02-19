@@ -24,11 +24,13 @@ public class Server {
 	ByteSerialize seria;
 	
 	boolean initedServer = false;
+	boolean debug = false;
 	
-	public Server(){
+	public Server(boolean debug){
 		this.math = new MathUtility();
 		this.storage = new ServerStorage();
 		this.seria = new ByteSerialize();
+		this.debug = debug;
 	}
 	
 	public void run() {
@@ -238,7 +240,13 @@ public class Server {
 	}
 	public static void main(String[] args) {
 		// TODO Auto-generated method stub
-		Server server = new Server();
+		Server server = null;
+		if (args.length == 1 && args[0].equals("-D")) {
+			server = new Server(true);
+		}
+		else {
+			server = new Server(false);
+		}
 		server.run();
 	}
 
