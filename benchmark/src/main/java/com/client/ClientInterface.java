@@ -2,6 +2,11 @@ package com.client;
 
 import com.ringoram.BucketMetadata;
 
+import org.openjdk.jmh.annotations.Benchmark;
+import org.openjdk.jmh.annotations.Scope;
+import org.openjdk.jmh.annotations.State;
+
+@State(Scope.Thread)
 public interface ClientInterface {
 
 	/*when read or write block, first read path from server
