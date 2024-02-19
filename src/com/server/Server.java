@@ -39,7 +39,8 @@ public class Server {
 					Executors.defaultThreadFactory());
 			AsynchronousServerSocketChannel channel = AsynchronousServerSocketChannel.open(threadGroup)
 					.bind(new InetSocketAddress(Configs.SERVER_PORT));
-			System.out.println("server wait for connection.");
+			if (debug)
+				System.out.println("server wait for connection.");
 			channel.accept(null, new CompletionHandler<AsynchronousSocketChannel, Void>() {
 
 				@Override
@@ -96,7 +97,8 @@ public class Server {
 						if (!initedServer) {
 							initServer();
 						} else {
-							System.out.println("server had been initialized!");
+							if (debug)
+								System.out.println("server had been initialized!");
 							lock.unlock();
 							break;
 						}
@@ -110,12 +112,15 @@ public class Server {
 					serializedResponse = responseBytes;
 					responseHeader = MessageUtility.createMessageHeaderBytes(MessageUtility.ORAM_INIT,
 							serializedResponse.length);
-					System.out.println("server INIT successful!");
-					System.out.println();
+					if (debug) {
+						System.out.println("server INIT successful!");
+						System.out.println();
+					}
 					responseBytes = null;
 				}
 				if(type == MessageUtility.ORAM_GETMETA){//get bucket meta data
-					System.out.println("server processes GETMETA request.");
+					if (debug)
+						System.out.println("server processes GETMETA request.");
 					byte[] pos_bytes = new byte[4];
 					message.get(pos_bytes);
 					int pos = Ints.fromByteArray(pos_bytes);
@@ -147,7 +152,8 @@ public class Server {
 					meta_bytes = null;
 				}
 				if(type == MessageUtility.ORAM_READBLOCK){//read block
-					System.out.println("server processes READBLOCK request.");
+					if (debug)
+						System.out.println("server processes READBLOCK request.");
 					byte[] pos_bytes = new byte[4];
 					message.get(pos_bytes);
 					int position = Ints.fromByteArray(pos_bytes);//path id
