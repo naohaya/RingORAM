@@ -30,7 +30,7 @@ public class Client implements ClientInterface{
 	Stash stash;
 	ByteSerialize seria;
 	MathUtility math;
-	boolean exstash;
+	
 	
 	@SuppressWarnings("rawtypes")
 	public Client() {
@@ -85,6 +85,7 @@ public class Client implements ClientInterface{
 	 * @param newdata: when operation is write, newdata is the data that you want to write
 	 */
 	public byte[] oblivious_access(int blockIndex, OPERATION op, byte[] newdata){
+		boolean exstash;
 		requestID ++;
 		System.out.println("Process request "+requestID);
 		
