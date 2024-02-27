@@ -100,7 +100,7 @@ public class Client implements ClientInterface {
 		int position = position_map[blockIndex];
 		int position_new = math.getRandomLeaf() + Configs.LEAF_START;
 		position_map[blockIndex] = position_new;
-		Block block = stash.find_by_blockIndex(blockIndex);
+		Block block = stash.find_by_blockIndex(blockIndex);//find in the stash
 		if (op == OPERATION.ORAM_ACCESS_WRITE) {
 			if (block != null) {// in the stash
 				// find in the stash, update stash block
@@ -120,8 +120,6 @@ public class Client implements ClientInterface {
 		if (exstash = false) {
 			// read block from server, and insert into the stash
 			read_path(position, blockIndex);
-			// find block from the stash
-			block = stash.find_by_blockIndex(blockIndex);
 		}
 		if (op == OPERATION.ORAM_ACCESS_WRITE) {
 			if (block == null) {// not in the stash
