@@ -30,6 +30,7 @@ public class Client implements ClientInterface{
 	Stash stash;
 	ByteSerialize seria;
 	MathUtility math;
+	boolean exstash;
 	
 	@SuppressWarnings("rawtypes")
 	public Client() {
@@ -93,7 +94,24 @@ public class Client implements ClientInterface{
 		int position = position_map[blockIndex];
 		int position_new = math.getRandomLeaf() + Configs.LEAF_START;
 		position_map[blockIndex] = position_new;
-		
+		Block block = stash.find_by_blockIndex(blockIndex);
+		if(op == OPERATION.ORAM_ACCESS_WRITE){
+			if(block != null){//in the stash
+			//find in the stash, update stash block
+				block.setData(newdata);
+				block.setLeaf_id(position_new);
+				}
+			readData = block.getData();
+			exstash = true;
+		}
+		if(op == OPERATION.ORAM_ACCESS_READ){
+			if(block != null){//find block in the stash or servere
+				System.out.println("when read block "+blockIndex+" find block in the stash.");
+				readData = block.getData();
+				exstash = true;
+			}
+		}
+		if(!exstash){
 		//read block from server, and insert into the stash
 		read_path(position, blockIndex);
 		//find block from the stash
@@ -121,7 +139,7 @@ public class Client implements ClientInterface{
 				readData = block.getData();
 			}
 		}
-		
+		}
 		evict_count = (evict_count+1)%Configs.SHUFFLE_RATE;
 		//evict count reaches shuffle rate, evict path
 		if(evict_count == 0){
