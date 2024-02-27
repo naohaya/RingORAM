@@ -115,7 +115,7 @@ public class Client implements ClientInterface{
 		//read block from server, and insert into the stash
 		read_path(position, blockIndex);
 		//find block from the stash
-		Block block = stash.find_by_blockIndex(blockIndex);
+		block = stash.find_by_blockIndex(blockIndex);
 		
 		if(op == OPERATION.ORAM_ACCESS_WRITE){
 			if(block==null){//not in the stash
