@@ -101,9 +101,9 @@ public class Client implements ClientInterface{
 			//find in the stash, update stash block
 				block.setData(newdata);
 				block.setLeaf_id(position_new);
+				readData = block.getData();
+				exstash = true;
 				}
-			readData = block.getData();
-			exstash = true;
 		}
 		if(op == OPERATION.ORAM_ACCESS_READ){
 			if(block != null){//find block in the stash or servere
@@ -140,7 +140,7 @@ public class Client implements ClientInterface{
 				readData = block.getData();
 			}
 		}
-		}
+	    }
 		evict_count = (evict_count+1)%Configs.SHUFFLE_RATE;
 		//evict count reaches shuffle rate, evict path
 		if(evict_count == 0){
