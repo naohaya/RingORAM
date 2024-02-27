@@ -112,7 +112,7 @@ public class Client implements ClientInterface{
 				exstash = true;
 			}
 		}
-		if(!exstash){
+		if(exstash = false){
 		//read block from server, and insert into the stash
 		read_path(position, blockIndex);
 		//find block from the stash
