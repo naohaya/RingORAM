@@ -5,7 +5,8 @@ public class Configs {
 	public static int THREAD_FIXED = 4;
 
 	// server host name and port
-	public static String SERVER_HOSTNAME = "10.0.2.15";
+//	public static String SERVER_HOSTNAME = "localhost"; // for running in a local machine
+	public static String SERVER_HOSTNAME = "10.0.2.15";	 // for running on two machines
 	public static int SERVER_PORT = 12339;
 	
 	//block data length
@@ -15,7 +16,7 @@ public class Configs {
 	//the min dummy block count in the bucket
 	public static int DUMMY_BLOCK_COUNT = 6;
 	//total bucket count in the tree, must be full binary tree
-	public static int BUCKET_COUNT = 7;
+	public static int BUCKET_COUNT = 14;
 	
 	//total block count in bucket
 	public static int Z = REAL_BLOCK_COUNT + DUMMY_BLOCK_COUNT;
