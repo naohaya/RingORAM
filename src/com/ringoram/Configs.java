@@ -15,7 +15,7 @@ public class Configs {
 	//the min dummy block count in the bucket
 	public static int DUMMY_BLOCK_COUNT = 6;
 	//total bucket count in the tree, must be full binary tree
-	public static int BUCKET_COUNT = 7;
+	public static int BUCKET_COUNT = 10;
 	
 	//total block count in bucket
 	public static int Z = REAL_BLOCK_COUNT + DUMMY_BLOCK_COUNT;
