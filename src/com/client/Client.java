@@ -100,52 +100,54 @@ public class Client implements ClientInterface {
 		int position = position_map[blockIndex];
 		int position_new = math.getRandomLeaf() + Configs.LEAF_START;
 		position_map[blockIndex] = position_new;
-		Block block = stash.find_by_blockIndex(blockIndex);//find in the stash
+		Block block = stash.find_by_blockIndex(blockIndex);// find in the stash
 		if (op == OPERATION.ORAM_ACCESS_WRITE) {
 			if (block != null) {// in the stash
 				// find in the stash, update stash block
+				exstash = true;
 				block.setData(newdata);
 				block.setLeaf_id(position_new);
 				readData = block.getData();
-				exstash = true;
+
 			}
 		}
 		if (op == OPERATION.ORAM_ACCESS_READ) {
 			if (block != null) {// find block in the stash or servere
+				exstash = true;
 				System.out.println("when read block " + blockIndex + " find block in the stash.");
 				readData = block.getData();
-				exstash = true;
+
 			}
 		}
 		if (exstash = false) {
 			// read block from server, and insert into the stash
 			read_path(position, blockIndex);
-		}
-		if (op == OPERATION.ORAM_ACCESS_WRITE) {
-			if (block == null) {// not in the stash
-				// System.out.println("when write, can't find block in the stash");
-				// new block and add it to the stash
-				block = new Block(blockIndex, position_new, newdata);
-				stash.add(block);
-			} else {// find in the stash, update stash block
-				block.setData(newdata);
-				block.setLeaf_id(position_new);
-				/*
-				 * if(stash.find_by_address(blockIndex)==block)
-				 * System.out.println("find block in stash and update successful!");
-				 * else
-				 * System.out.println("find block in the stash and update fail!");
-				 */
-			}
-			readData = block.getData();
-		}
-		if (op == OPERATION.ORAM_ACCESS_READ) {
-			if (block != null) {// find block in the stash or servere
-				System.out.println("when read block " + blockIndex + " find block in the stash.");
+			block = stash.find_by_blockIndex(blockIndex);
+			if (op == OPERATION.ORAM_ACCESS_WRITE) {
+				if (block == null) {// not in the stash
+					// System.out.println("when write, can't find block in the stash");
+					// new block and add it to the stash
+					block = new Block(blockIndex, position_new, newdata);
+					stash.add(block);
+				} else {// find in the stash, update stash block
+					block.setData(newdata);
+					block.setLeaf_id(position_new);
+					/*
+					 * if(stash.find_by_address(blockIndex)==block)
+					 * System.out.println("find block in stash and update successful!");
+					 * else
+					 * System.out.println("find block in the stash and update fail!");
+					 */
+				}
 				readData = block.getData();
 			}
+			if (op == OPERATION.ORAM_ACCESS_READ) {
+				if (block != null) {// find block in the stash or servere
+					System.out.println("when read block " + blockIndex + " find block in the stash.");
+					readData = block.getData();
+				}
+			}
 		}
-
 		evict_count = (evict_count + 1) % Configs.SHUFFLE_RATE;
 		// evict count reaches shuffle rate, evict path
 		if (evict_count == 0) {
