@@ -85,7 +85,8 @@ public class Client implements ClientInterface{
 	 */
 	public byte[] oblivious_access(int blockIndex, OPERATION op, byte[] newdata){
 		requestID ++;
-		System.out.println("Process request "+requestID);
+		System.out.println("Process request "+requestID+" for block: "+blockIndex);
+		Block block = null; 
 		
 		byte[] readData = null;//return data
 		
@@ -94,10 +95,16 @@ public class Client implements ClientInterface{
 		int position_new = math.getRandomLeaf() + Configs.LEAF_START;
 		position_map[blockIndex] = position_new;
 		
-		//read block from server, and insert into the stash
-		read_path(position, blockIndex);
-		//find block from the stash
-		Block block = stash.find_by_blockIndex(blockIndex);
+		block = stash.find_by_blockIndex(blockIndex);
+		if (block == null) {
+			//read block from server, and insert into the stash
+			read_path(position, blockIndex);
+			//find block from the stash
+			block = stash.find_by_blockIndex(blockIndex);
+			System.out.println("read from the server: " + blockIndex);
+		} else {
+			System.out.println("Stash hit!!!");
+		}
 		
 		if(op == OPERATION.ORAM_ACCESS_WRITE){
 			if(block==null){//not in the stash
@@ -122,9 +129,16 @@ public class Client implements ClientInterface{
 			}
 		}
 		
-		evict_count = (evict_count+1)%Configs.SHUFFLE_RATE;
+		// evict_count = (evict_count+1)%Configs.SHUFFLE_RATE+10;
+		evict_count = 1;
 		//evict count reaches shuffle rate, evict path
 		if(evict_count == 0){
+			
+			//avoiding the path eviction of pos 0 for the experiment
+			if (evict_g == 0) {
+				evict_g++;
+			}
+
 			evict_path(math.gen_reverse_lexicographic(evict_g, Configs.BUCKET_COUNT, Configs.HEIGHT));
 			evict_g = (evict_g+1)%Configs.LEAF_COUNT;
 		}
@@ -133,6 +147,9 @@ public class Client implements ClientInterface{
 		BucketMetadata[] meta_list = get_metadata(position);
 		early_reshuffle(position, meta_list);
 		
+		// debug output in stash
+		stash.showStash();
+
 		return readData;
 	}
 	
