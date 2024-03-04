@@ -99,7 +99,7 @@ public class Client implements ClientInterface {
 		int position = position_map[blockIndex];
 		int position_new = math.getRandomLeaf() + Configs.LEAF_START;
 		position_map[blockIndex] = position_new;
-		Block block = stash.find_by_blockIndex(blockIndex);// find in the stash
+		/*Block block = stash.find_by_blockIndex(blockIndex);// find in the stash
 		if (block == null) {// in the stash
 			read_path(position, blockIndex);
 		} else {
@@ -107,6 +107,11 @@ public class Client implements ClientInterface {
 		}
 		// read block from server, and insert into the stash
 		block = stash.find_by_blockIndex(blockIndex);// find in the stash
+		*/
+		//read block from server, and insert into the stash
+		read_path(position, blockIndex);//Read Path(論文参照)
+		//find block from the stash
+		Block block = stash.find_by_blockIndex(blockIndex);
 		if (op == OPERATION.ORAM_ACCESS_WRITE) {
 			if (block == null) {// not in the stash
 				// System.out.println("when write, can't find block in the stash");
@@ -142,7 +147,7 @@ public class Client implements ClientInterface {
 		// early re-shuffle current path
 		BucketMetadata[] meta_list = get_metadata(position);
 		early_reshuffle(position, meta_list);
-
+		stash.showStash();
 		return readData;
 	}
 
