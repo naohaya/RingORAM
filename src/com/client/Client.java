@@ -126,6 +126,7 @@ public class Client implements ClientInterface {
 			}
 			readData = block.getData();
 		}
+		stash.shoWStash();
 		if (op == OPERATION.ORAM_ACCESS_READ) {
 			if (block != null) {// find block in the stash or servere
 				System.out.println("when read block " + blockIndex + " find block in the stash.");
@@ -141,7 +142,6 @@ public class Client implements ClientInterface {
 		// early re-shuffle current path
 		BucketMetadata[] meta_list = get_metadata(position);
 		early_reshuffle(position, meta_list);
-		stash.shoWStash();
 		return readData;
 	}
 
