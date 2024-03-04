@@ -120,7 +120,7 @@ public class Stash {
 	public void setCount(int[] counter) {
 		this.counter = counter;
 	}
-	public void shoWStash(){
+	public void showStash(){
 		System.out.println();
 		for (Integer key : stash_hash.keySet()) {
 			System.out.println(key + "block in the stash");

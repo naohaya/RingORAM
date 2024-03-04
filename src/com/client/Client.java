@@ -126,7 +126,7 @@ public class Client implements ClientInterface {
 			}
 			readData = block.getData();
 		}
-		stash.shoWStash();
+		stash.showStash();
 		if (op == OPERATION.ORAM_ACCESS_READ) {
 			if (block != null) {// find block in the stash or servere
 				System.out.println("when read block " + blockIndex + " find block in the stash.");
