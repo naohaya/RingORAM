@@ -100,7 +100,7 @@ public class Client implements ClientInterface {
 		int position_new = math.getRandomLeaf() + Configs.LEAF_START;
 		position_map[blockIndex] = position_new;
 		Block block = stash.find_by_blockIndex(blockIndex);// find in the stash
-		if (block != null) {// in the stash
+		if (block == null) {// in the stash
 			read_path(position, blockIndex);
 			block = stash.find_by_blockIndex(blockIndex);// find in the stash
 		} else {
