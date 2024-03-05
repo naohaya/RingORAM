@@ -121,7 +121,6 @@ public class Stash {
 		this.counter = counter;
 	}
 	public void showStash(){
-		System.out.println();
 		for (Integer key : stash_hash.keySet()) {
 			System.out.println(key + ":" + stash_hash.get(key));
 		}
