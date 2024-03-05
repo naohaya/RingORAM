@@ -123,7 +123,7 @@ public class Stash {
 	public void showStash(){
 		System.out.println();
 		for (Integer key : stash_hash.keySet()) {
-			System.out.println(key + "block in the stash");
+			System.out.println(key + ":" + stash_hash.get(key));
 		}
 	}
 

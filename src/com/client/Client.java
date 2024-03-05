@@ -126,7 +126,6 @@ public class Client implements ClientInterface {
 			}
 			readData = block.getData();
 		}
-		stash.showStash();
 		if (op == OPERATION.ORAM_ACCESS_READ) {
 			if (block != null) {// find block in the stash or servere
 				System.out.println("when read block " + blockIndex + " find block in the stash.");
@@ -135,13 +134,15 @@ public class Client implements ClientInterface {
 		}
 		evict_count = (evict_count + 1) % Configs.SHUFFLE_RATE;
 		// evict count reaches shuffle rate, evict path
-		if (evict_count == 0){
+		if (evict_count == 0) {
 			evict_path(math.gen_reverse_lexicographic(evict_g, Configs.BUCKET_COUNT, Configs.HEIGHT));
 			evict_g = (evict_g + 1) % Configs.LEAF_COUNT;
 		}
 		// early re-shuffle current path
 		BucketMetadata[] meta_list = get_metadata(position);
 		early_reshuffle(position, meta_list);
+
+		stash.showStash();
 		return readData;
 	}
 
@@ -395,7 +396,7 @@ public class Client implements ClientInterface {
 		byte[] newdata = new byte[Configs.BLOCK_DATA_LEN];
 		Arrays.fill(newdata, (byte) 12);
 		client.oblivious_access(3, OPERATION.ORAM_ACCESS_WRITE, newdata);
-		for (int i = 0; i < 9; i++) {
+		for (int i = 0; i < 10; i++) {
 			byte[] data = new byte[Configs.BLOCK_DATA_LEN];
 			// Arrays.fill(data, (byte)1);
 			data = client.oblivious_access(i, OPERATION.ORAM_ACCESS_READ, data);
