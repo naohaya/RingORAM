@@ -129,8 +129,9 @@ public class Client implements ClientInterface{
 			}
 		}
 		
-		// evict_count = (evict_count+1)%Configs.SHUFFLE_RATE+10;
-		evict_count = 1;
+		evict_count = (evict_count+1)%Configs.SHUFFLE_RATE+10;
+		//evict_count = 1;
+		
 		//evict count reaches shuffle rate, evict path
 		if(evict_count == 0){
 			
