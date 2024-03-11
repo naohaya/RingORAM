@@ -15,6 +15,8 @@ import com.google.common.primitives.Ints;
 import com.ringoram.*;
 import com.ringoram.Configs.OPERATION;
 
+import java.util.Random; 
+
 public class Client implements ClientInterface{
 
 	private static int requestID = 0;
@@ -26,6 +28,7 @@ public class Client implements ClientInterface{
 	private int evict_count;
 	private int evict_g;
 	private int[] position_map;
+	private int stash_hit_counter = 0;
 	
 	Stash stash;
 	ByteSerialize seria;
@@ -104,6 +107,7 @@ public class Client implements ClientInterface{
 			System.out.println("read from the server: " + blockIndex);
 		} else {
 			System.out.println("Stash hit!!!");
+			stash_hit_counter ++;
 		}
 		
 		if(op == OPERATION.ORAM_ACCESS_WRITE){
@@ -131,7 +135,7 @@ public class Client implements ClientInterface{
 		
 		evict_count = (evict_count+1)%Configs.SHUFFLE_RATE+10;
 		//evict_count = 1;
-		
+
 		//evict count reaches shuffle rate, evict path
 		if(evict_count == 0){
 			
@@ -389,7 +393,23 @@ public class Client implements ClientInterface{
 		}
 		return responseBytes;
 	}
+
+	private boolean isInStash(int blockIndex) {
+		if (stash.find_by_blockIndex(blockIndex) != null)
+			return true;
+		else 
+			return false;
+	}
+
+	private void printStashHitCount(){
+		System.out.println("Stash hit: " + stash_hit_counter);
+	}
+
 	public static void main(String[] args) {
+		Random rand = new Random();
+		int stash_hit_ratio = 30;
+		int bid = 0;
+
 		// TODO Auto-generated method stub
 		Client client = new Client();
 		client.initServer();
@@ -404,18 +424,32 @@ public class Client implements ClientInterface{
 		for(int i=0;i<10;i++){
 			byte[] data = new byte[Configs.BLOCK_DATA_LEN];
 			//Arrays.fill(data, (byte)1);
-			data = client.oblivious_access(i, OPERATION.ORAM_ACCESS_READ, data);
+			bid = rand.nextInt(10);
+
+			if (rand.nextInt(100) < stash_hit_ratio) {
+				// stash hit
+				while(!client.isInStash(bid))
+					bid = rand.nextInt(10);
+				
+			}
+			else {
+				// stash hit miss
+				while(client.isInStash(bid))
+					bid = rand.nextInt(10);
+			}
+			data = client.oblivious_access(bid, OPERATION.ORAM_ACCESS_READ, data);
 			if(data != null){
-				System.out.println("block "+i+" data:");
+				System.out.println("block "+bid+" data:");
 				for(int j=0;j<Configs.BLOCK_DATA_LEN;j++){
 					System.out.print(data[j]+" ");
 				}
 				System.out.println();
 			}else{
-				System.out.println("can't find block "+i+" in server storage");
+				System.out.println("can't find block "+bid+" in server storage");
 			}
 		}
 		client.close(); // close the ThreadExecutor.
+		client.printStashHitCount();
 	}
 
 }
