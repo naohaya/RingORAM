@@ -398,6 +398,13 @@ public class Client implements ClientInterface{
 		return responseBytes;
 	}
 
+	private boolean isInStash(int blockIndex) {
+		if (stash.find_by_blockIndex(blockIndex) != null)
+			return true;
+		else 
+			return false;
+	}
+
 	/* Benchmark related methods */
 	// setup for a benchmark
 	@Setup
