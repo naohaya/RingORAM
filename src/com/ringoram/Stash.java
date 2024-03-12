@@ -54,6 +54,8 @@ public class Stash {
 	}
 
 	public int remove_by_bucket_helper(int bucket_id, int len, int start, Block[] block_list) {
+		Random rand = new Random();
+		int num = rand.nextInt(6);
 		int delete_now = 0;
 		int delete_max = 0;
 		Block block;
@@ -65,7 +67,7 @@ public class Stash {
 			delete_max = min(delete_now, len);
 			for (int j = 0; j < delete_max; j++) {
 				block = stash_list.get(bucket_id).get(0);
-				if (block.getBlockIndex() != 0) {
+				if (block.getBlockIndex() != num) {
 					stash_list.get(bucket_id).remove(0);
 					block_list[start++] = block;
 					stash_hash.remove(block.getBlockIndex());
