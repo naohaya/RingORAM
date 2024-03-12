@@ -28,6 +28,8 @@ import org.openjdk.jmh.runner.RunnerException;
 import org.openjdk.jmh.runner.options.Options;
 import org.openjdk.jmh.runner.options.OptionsBuilder;
 
+import java.util.Random;
+
 @State(Scope.Thread)
 public class Client implements ClientInterface{
 
@@ -47,6 +49,8 @@ public class Client implements ClientInterface{
 	Stash stash;
 	ByteSerialize seria;
 	MathUtility math;
+	Random rand;
+	int stash_hit_ratio = 30;
 	
 	@SuppressWarnings("rawtypes")
 	public Client() {
@@ -400,9 +404,10 @@ public class Client implements ClientInterface{
 	public void prepare(){
 		client = new Client();
 		client.initServer();
+		rand = new Random();
 
 		/* Warmup loop (write something) */
-		for(int i=0;i<4;i++){
+		for(int i=0;i<10;i++){
 			byte[] data = new byte[Configs.BLOCK_DATA_LEN];
 			Arrays.fill(data, (byte)i);
 			client.oblivious_access(i, OPERATION.ORAM_ACCESS_WRITE, data);
@@ -417,7 +422,25 @@ public class Client implements ClientInterface{
 	// main method for the benchmark
 	@Benchmark
 	public void operation(){
-		/* Write operation */
+		int bid = rand.nextInt(10);
+		byte[] data = new byte[Configs.BLOCK_DATA_LEN];
+		Arrays.fill(data, (byte)bid);
+		
+
+		if (rand.nextInt(100) < stash_hit_ratio) {
+			// stash hit
+			while(!client.isInStash(bid))
+				bid = rand.nextInt(10);
+			
+		}
+		else {
+			// stash hit miss
+			while(client.isInStash(bid))
+				bid = rand.nextInt(10);
+		}
+		data = client.oblivious_access(bid, OPERATION.ORAM_ACCESS_WRITE, data); // Write op
+		/*
+		// Write operation 
 		for(int i=0;i<4;i++){
 			byte[] data = new byte[Configs.BLOCK_DATA_LEN];
 			Arrays.fill(data, (byte)i);
@@ -427,7 +450,7 @@ public class Client implements ClientInterface{
 		Arrays.fill(newdata, (byte)12);
 		client.oblivious_access(3, OPERATION.ORAM_ACCESS_WRITE, newdata);
 
-		/* Read operation */
+		// Read operation 
 		for(int i=0;i<4;i++){
 			byte[] data = new byte[Configs.BLOCK_DATA_LEN];
 			//Arrays.fill(data, (byte)1);
@@ -446,6 +469,7 @@ public class Client implements ClientInterface{
 					System.out.println("can't find block "+i+" in server storage");
 			}
 		}
+		*/
 	}
 
 	// finalizing the benchmark
