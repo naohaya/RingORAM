@@ -72,7 +72,7 @@ public class Stash {
 					block_list[start++] = block;
 					stash_hash.remove(block.getBlockIndex());
 				} else {
-					System.out.println("Block 0 remains in stash");
+					System.out.println("Block" + num +  "remains in stash");
 				}
 				for (int pos_run = bucket_id; pos_run >= 0; pos_run = (pos_run - 1) >> 1) {
 					counter[pos_run]--;

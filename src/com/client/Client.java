@@ -92,14 +92,14 @@ public class Client implements ClientInterface {
 	public byte[] oblivious_access(int blockIndex, OPERATION op, byte[] newdata) {
 		requestID++;
 		System.out.println("Process request " + requestID);
-
+		Block block = null;
 		byte[] readData = null;// return data
 
 		// get leaf id and update a new random leaf id
 		int position = position_map[blockIndex];
 		int position_new = math.getRandomLeaf() + Configs.LEAF_START;
 		position_map[blockIndex] = position_new;
-		Block block = stash.find_by_blockIndex(blockIndex);
+		block = stash.find_by_blockIndex(blockIndex);
 		if (block == null) {
 			// read block from server, and insert into the stash
 			read_path(position, blockIndex);
@@ -136,16 +136,13 @@ public class Client implements ClientInterface {
 		evict_count = (evict_count + 1) % Configs.SHUFFLE_RATE;
 		// evict count reaches shuffle rate, evict path
 		if (evict_count == 0) {
-			if(evict_g == 0){
-				evict_g++;
-			}
 			evict_path(math.gen_reverse_lexicographic(evict_g, Configs.BUCKET_COUNT, Configs.HEIGHT));
 			evict_g = (evict_g + 1) % Configs.LEAF_COUNT;
 		}
 		// early re-shuffle current path
 		BucketMetadata[] meta_list = get_metadata(position);
 		early_reshuffle(position, meta_list);
-
+		System.out.println("conduct showStash");//for verification
 		stash.showStash();
 		return readData;
 	}
