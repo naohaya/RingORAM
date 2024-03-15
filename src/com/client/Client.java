@@ -401,8 +401,8 @@ public class Client implements ClientInterface {
 		return hit_count;
 	}
 	private void PrintStash_hit_rate_reference(){
-		int hit_ratio = get_hit_count() / 10;
-		System.out.println("Stash hit rate is" + hit_ratio + "%");
+		Double hit_ratio = get_hit_count() / 10.0;
+		System.out.println("Stash hit rate is " + hit_ratio + " %");
 	}
 
 	public static void main(String[] args) {
