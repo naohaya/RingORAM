@@ -430,7 +430,7 @@ public class Client implements ClientInterface{
 		byte[] newdata = new byte[Configs.BLOCK_DATA_LEN];
 		Arrays.fill(newdata, (byte)12);
 		client.oblivious_access(3, OPERATION.ORAM_ACCESS_WRITE, newdata);
-		for(int i=0;i<10;i++){
+		for(int i=0;i<iteration;i++){
 			byte[] data = new byte[Configs.BLOCK_DATA_LEN];
 			//Arrays.fill(data, (byte)1);
 			bid = rand.nextInt(10);
