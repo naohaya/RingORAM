@@ -407,7 +407,7 @@ public class Client implements ClientInterface {
 		for (int i = 0; i < 10; i++) {
 			byte[] data = new byte[Configs.BLOCK_DATA_LEN];
 			Arrays.fill(data, (byte) i);
-			client.oblivious_access(i, OPERATION.ORAM_ACCESS_WRITE, data);
+			client.oblivious_access(rand.nextInt(10), OPERATION.ORAM_ACCESS_WRITE, data);
 		}
 		byte[] newdata = new byte[Configs.BLOCK_DATA_LEN];
 		Arrays.fill(newdata, (byte) 12);
