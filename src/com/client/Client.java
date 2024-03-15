@@ -407,8 +407,17 @@ public class Client implements ClientInterface{
 
 	public static void main(String[] args) {
 		Random rand = new Random();
+		int iteration = 100;
 		int stash_hit_ratio = 30;
 		int bid = 0;
+
+		if (args.length == 1) {
+			stash_hit_ratio = Integer.parseInt(args[0]);
+		}
+		if (args.length == 2) {
+			stash_hit_ratio = Integer.parseInt(args[0]);
+			iteration = Integer.parseInt(args[1]);
+		}
 
 		// TODO Auto-generated method stub
 		Client client = new Client();
