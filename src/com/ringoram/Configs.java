@@ -25,6 +25,7 @@ public class Configs {
 	public static int HEIGHT = (int) (Math.log(BUCKET_COUNT)/Math.log(2) + 1);
 	//total leaf count in the tree
 	public static int LEAF_COUNT = (BUCKET_COUNT+1)/2;
+	
 	//leaf start index in tree node(root is 0)
 	public static int LEAF_START = BUCKET_COUNT - LEAF_COUNT;
 	
