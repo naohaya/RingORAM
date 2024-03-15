@@ -6,6 +6,7 @@ import java.nio.ByteBuffer;
 import java.nio.channels.AsynchronousChannelGroup;
 import java.nio.channels.AsynchronousSocketChannel;
 import java.util.Arrays;
+import java.util.Random;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
@@ -105,8 +106,8 @@ public class Client implements ClientInterface {
 			read_path(position, blockIndex);
 			// find block from the stash
 			block = stash.find_by_blockIndex(blockIndex);
-			System.out.println("read from the server "+ blockIndex + " block");
-		}else{
+			System.out.println("read from the server " + blockIndex + " block");
+		} else {
 			System.out.println("stash hits!");
 		}
 
@@ -388,7 +389,18 @@ public class Client implements ClientInterface {
 		return responseBytes;
 	}
 
+	private boolean IsinStash(int block_index) {
+		if (stash.find_by_blockIndex(block_index) == null) {
+			return false;
+		} else {
+			return true;
+		}
+	}
+
 	public static void main(String[] args) {
+		Random rand = new Random();
+		int hit_ratio = 20;
+		int block_id = 0;
 		// TODO Auto-generated method stub
 		Client client = new Client();
 		client.initServer();
@@ -401,8 +413,26 @@ public class Client implements ClientInterface {
 		Arrays.fill(newdata, (byte) 12);
 		client.oblivious_access(3, OPERATION.ORAM_ACCESS_WRITE, newdata);
 		for (int i = 0; i < 10; i++) {
+			block_id = rand.nextInt(10);
 			byte[] data = new byte[Configs.BLOCK_DATA_LEN];
 			// Arrays.fill(data, (byte)1);
+			if (rand.nextInt(100) < hit_ratio) {
+				for (;;) {
+					if (!client.IsinStash(block_id)) {
+						block_id = rand.nextInt(10);
+					} else {
+						break;
+					}
+				}
+			} else {
+				for (;;) {
+					if (client.IsinStash(block_id)) {
+						block_id = rand.nextInt(10);
+					} else {
+						break;
+					}
+				}
+			}
 			data = client.oblivious_access(i, OPERATION.ORAM_ACCESS_READ, data);
 			if (data != null) {
 				System.out.println("block " + i + " data:");
