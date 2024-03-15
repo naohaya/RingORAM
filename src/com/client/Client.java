@@ -27,7 +27,7 @@ public class Client implements ClientInterface {
 	private int evict_count;
 	private int evict_g;
 	private int[] position_map;
-
+	int hit_count = 0;
 	Stash stash;
 	ByteSerialize seria;
 	MathUtility math;
@@ -109,6 +109,7 @@ public class Client implements ClientInterface {
 			System.out.println("read from the server " + blockIndex + " block");
 		} else {
 			System.out.println("stash hits!");
+			hit_count++;
 		}
 
 		if (op == OPERATION.ORAM_ACCESS_WRITE) {
@@ -396,6 +397,13 @@ public class Client implements ClientInterface {
 			return true;
 		}
 	}
+	private int get_hit_count(){
+		return hit_count;
+	}
+	private void PrintStash_hit_rate_reference(){
+		int hit_ratio = get_hit_count() / 10;
+		System.out.println("Stash hit rate is" + hit_ratio + "%");
+	}
 
 	public static void main(String[] args) {
 		Random rand = new Random();
@@ -443,6 +451,7 @@ public class Client implements ClientInterface {
 			} else {
 				System.out.println("can't find block " + i + " in server storage");
 			}
+			client.PrintStash_hit_rate_reference();
 		}
 		client.close(); // close the ThreadExecutor.
 	}
