@@ -85,22 +85,26 @@ public class Client implements ClientInterface{
 	public byte[] oblivious_access(int blockIndex, OPERATION op, byte[] newdata){
 		requestID ++;
 		System.out.println("Process request "+requestID);
-		
+		Block block = null;
 		byte[] readData = null;//return data
 		
 		//get leaf id and update a new random leaf id
 		int position = position_map[blockIndex];
 		int position_new = math.getRandomLeaf() + Configs.LEAF_START;
 		position_map[blockIndex] = position_new;
-		
-		//read block from server, and insert into the stash
-		read_path(position, blockIndex);
+		block = stash.find_by_blockIndex(blockIndex);
+		if(block == null){
+		 //read block from server, and insert into the stash
+		 read_path(position, blockIndex);
+		 block = stash.find_by_blockIndex(blockIndex);
+		 System.out.println("read from the server" + block_index);
+	    }else{
+		System.out.println("stash hits!");
+	    }
 		//find block from the stash
-		Block block = stash.find_by_blockIndex(blockIndex);
-		
 		if(op == OPERATION.ORAM_ACCESS_WRITE){
 			if(block==null){//not in the stash
-				//System.out.println("when write, can't find block in the stash");
+				System.out.println("when write, can't find block in the stash");
 				//new block and add it to the stash
 				block = new Block(blockIndex,position_new,newdata);
 				stash.add(block);
@@ -374,7 +378,7 @@ public class Client implements ClientInterface{
 		// TODO Auto-generated method stub
 		Client client = new Client();
 		client.initServer();
-		for(int i=0;i<4;i++){
+		for(int i=0;i<10;i++){
 			byte[] data = new byte[Configs.BLOCK_DATA_LEN];
 			Arrays.fill(data, (byte)i);
 			client.oblivious_access(i, OPERATION.ORAM_ACCESS_WRITE, data);
@@ -382,7 +386,7 @@ public class Client implements ClientInterface{
 		byte[] newdata = new byte[Configs.BLOCK_DATA_LEN];
 		Arrays.fill(newdata, (byte)12);
 		client.oblivious_access(3, OPERATION.ORAM_ACCESS_WRITE, newdata);
-		for(int i=0;i<4;i++){
+		for(int i=0;i<10;i++){
 			byte[] data = new byte[Configs.BLOCK_DATA_LEN];
 			//Arrays.fill(data, (byte)1);
 			data = client.oblivious_access(i, OPERATION.ORAM_ACCESS_READ, data);
