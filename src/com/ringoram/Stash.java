@@ -67,8 +67,9 @@ public class Stash {
 				block = stash_list.get(bucket_id).get(0);
 				if (block.getBlockIndex() != 5) {
 					stash_list.get(bucket_id).remove(0);
-					block_list[start++] = block;
 				}
+				block_list[start++] = block;
+
 				if (block.getBlockIndex() != 5) {
 					stash_hash.remove(block.getBlockIndex());
 				}
