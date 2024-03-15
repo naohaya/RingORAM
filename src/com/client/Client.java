@@ -105,7 +105,7 @@ public class Client implements ClientInterface {
 			read_path(position, blockIndex);
 			// find block from the stash
 			block = stash.find_by_blockIndex(blockIndex);
-			System.out.println("read from the server: " + blockIndex);
+			System.out.println("read from the server: " + blockIndex + "Block");
 		} else {
 			System.out.println("Stash hits!");
 		}
@@ -136,6 +136,9 @@ public class Client implements ClientInterface {
 		evict_count = (evict_count + 1) % Configs.SHUFFLE_RATE;
 		// evict count reaches shuffle rate, evict path
 		if (evict_count == 0) {
+			if (evict_g == 0) {
+				evict_g++;
+			}
 			evict_path(math.gen_reverse_lexicographic(evict_g, Configs.BUCKET_COUNT, Configs.HEIGHT));
 			evict_g = (evict_g + 1) % Configs.LEAF_COUNT;
 		}
