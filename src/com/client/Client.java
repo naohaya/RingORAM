@@ -433,7 +433,7 @@ public class Client implements ClientInterface {
 					}
 				}
 			}
-			data = client.oblivious_access(i, OPERATION.ORAM_ACCESS_READ, data);
+			data = client.oblivious_access(rand.nextInt(10), OPERATION.ORAM_ACCESS_READ, data);
 			if (data != null) {
 				System.out.println("block " + i + " data:");
 				for (int j = 0; j < Configs.BLOCK_DATA_LEN; j++) {
