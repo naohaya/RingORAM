@@ -105,7 +105,7 @@ public class Client implements ClientInterface {
 			read_path(position, blockIndex);
 			// find block from the stash
 			block = stash.find_by_blockIndex(blockIndex);
-			System.out.println("read from the server");
+			System.out.println("read from the server"+ blockIndex);
 		}else{
 			System.out.println("stash hits!");
 		}
@@ -126,6 +126,7 @@ public class Client implements ClientInterface {
 				 * System.out.println("find block in the stash and update fail!");
 				 */
 			}
+			stash.showStash();
 			readData = block.getData();
 		}
 		if (op == OPERATION.ORAM_ACCESS_READ) {
