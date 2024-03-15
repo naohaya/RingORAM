@@ -401,7 +401,7 @@ public class Client implements ClientInterface {
 		return hit_count;
 	}
 	private void PrintStash_hit_rate_reference(){
-		Double hit_ratio = get_hit_count() / 10.0;
+		Double hit_ratio = get_hit_count() / 20.0 * 100.0;
 		System.out.println("Stash hit rate is " + hit_ratio + " %");
 	}
 
