@@ -451,8 +451,8 @@ public class Client implements ClientInterface {
 			} else {
 				System.out.println("can't find block " + i + " in server storage");
 			}
-			client.PrintStash_hit_rate_reference();
 		}
+		client.PrintStash_hit_rate_reference();
 		client.close(); // close the ThreadExecutor.
 	}
 
