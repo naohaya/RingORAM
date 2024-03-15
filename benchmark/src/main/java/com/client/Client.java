@@ -407,7 +407,7 @@ public class Client implements ClientInterface{
 
 	/* Benchmark related methods */
 	// setup for a benchmark
-	@Setup
+	@Setup(Level.Trial)
 	public void prepare(){
 		client = new Client();
 		client.initServer();
