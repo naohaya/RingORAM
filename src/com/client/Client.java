@@ -407,7 +407,7 @@ public class Client implements ClientInterface {
 
 	public static void main(String[] args) {
 		Random rand = new Random();
-		int hit_ratio = 20;
+		int hit_ratio = 50;
 		int block_id = 0;
 		// TODO Auto-generated method stub
 		Client client = new Client();
@@ -419,7 +419,7 @@ public class Client implements ClientInterface {
 		}
 		byte[] newdata = new byte[Configs.BLOCK_DATA_LEN];
 		Arrays.fill(newdata, (byte) 12);
-		client.oblivious_access(rand.nextInt(10), OPERATION.ORAM_ACCESS_WRITE, newdata);
+		client.oblivious_access(3, OPERATION.ORAM_ACCESS_WRITE, newdata);
 		for (int i = 0; i < 10; i++) {
 			block_id = rand.nextInt(10);
 			byte[] data = new byte[Configs.BLOCK_DATA_LEN];
