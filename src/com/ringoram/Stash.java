@@ -136,8 +136,12 @@ public class Stash {
 
 	public void showStash() {
 		for (Integer key : stash_hash.keySet()) {
-			System.out.println(key + ":" + stash_hash.get(key));
+			System.out.println(key + ": block in the stash");
 		}
+	}
+
+	public Boolean isinStash(){
+		return true;
 	}
 
 }
