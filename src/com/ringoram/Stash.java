@@ -15,6 +15,7 @@ public class Stash {
 	private Map<Integer,Block> stash_hash;
 	private List<List<Block>> stash_list;
 	private int[] counter;
+	boolean debug = false;
 	
 	public Stash(){
 		this.counter = new int[Configs.BUCKET_COUNT];
@@ -126,7 +127,8 @@ public class Stash {
 	// output current stash_hash
 	public void showStash() {
 		for (Integer key : stash_hash.keySet()) {
-			System.out.println(key + ":" + stash_hash.get(key));
+			if(debug)
+				System.out.println(key + ":" + stash_hash.get(key));
 		}
 	}
 

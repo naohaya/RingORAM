@@ -109,9 +109,11 @@ public class Client implements ClientInterface{
 			read_path(position, blockIndex);
 			//find block from the stash
 			block = stash.find_by_blockIndex(blockIndex);
-			System.out.println("read from the server: " + blockIndex);
+			if(debug)
+				System.out.println("read from the server: " + blockIndex);
 		} else {
-			System.out.println("Stash hit!!!");
+			if(debug)
+				System.out.println("Stash hit!!!");
 			stash_hit_counter ++;
 		}
 		
