@@ -407,7 +407,7 @@ public class Client implements ClientInterface {
 
 	public static void main(String[] args) {
 		Random rand = new Random();
-		int hit_ratio = 50;
+		int hit_ratio = 30;
 		int block_id = 0;
 		// TODO Auto-generated method stub
 		Client client = new Client();
@@ -452,7 +452,7 @@ public class Client implements ClientInterface {
 				System.out.println("can't find block " + i + " in server storage");
 			}
 		}
-		client.PrintStash_hit_rate_reference();
+		client.PrintStash_hit_rate_reference();//print stash hit rate
 		client.close(); // close the ThreadExecutor.
 	}
 
