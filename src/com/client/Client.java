@@ -397,10 +397,12 @@ public class Client implements ClientInterface {
 			return true;
 		}
 	}
-	private int get_hit_count(){
+
+	private int get_hit_count() {
 		return hit_count;
 	}
-	private void PrintStash_hit_rate_reference(){
+
+	private void PrintStash_hit_rate_reference() {
 		Double hit_ratio = get_hit_count() / 21.0 * 100.0;
 		System.out.println("Stash hit rate is " + hit_ratio + " %");
 	}
@@ -421,24 +423,16 @@ public class Client implements ClientInterface {
 		Arrays.fill(newdata, (byte) 12);
 		client.oblivious_access(3, OPERATION.ORAM_ACCESS_WRITE, newdata);
 		for (int i = 0; i < 10; i++) {
-			block_id = rand.nextInt(10);
+			block_id = rand.nextInt(10);// Assigning the first block id
 			byte[] data = new byte[Configs.BLOCK_DATA_LEN];
 			// Arrays.fill(data, (byte)1);
-			if (rand.nextInt(100) < hit_ratio) {
-				for (;;) {
-					if (!client.IsinStash(block_id)) {
-						block_id = rand.nextInt(10);
-					} else {
-						break;
-					}
+			if (rand.nextInt(100) < hit_ratio) {// 30 chance of stash hit
+				while (!client.IsinStash(block_id)) {// Reassigned if not in stash
+					block_id = rand.nextInt(10);
 				}
 			} else {
-				for (;;) {
-					if (client.IsinStash(block_id)) {
-						block_id = rand.nextInt(10);
-					} else {
-						break;
-					}
+				while (client.IsinStash(block_id)) {// 70 chance of stash hit
+					block_id = rand.nextInt(10);// Reassigned if in stash
 				}
 			}
 			data = client.oblivious_access(rand.nextInt(10), OPERATION.ORAM_ACCESS_READ, data);
@@ -452,7 +446,7 @@ public class Client implements ClientInterface {
 				System.out.println("can't find block " + i + " in server storage");
 			}
 		}
-		client.PrintStash_hit_rate_reference();//print stash hit rate
+		client.PrintStash_hit_rate_reference();// print stash hit rate
 		client.close(); // close the ThreadExecutor.
 	}
 
