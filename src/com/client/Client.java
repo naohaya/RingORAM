@@ -140,6 +140,7 @@ public class Client implements ClientInterface {
 		evict_count = (evict_count + 1) % Configs.SHUFFLE_RATE;
 		// evict count reaches shuffle rate, evict path
 		if (evict_count == 0) {
+			System.out.println("Do evict !");//Detect execution of evict path
 			evict_path(math.gen_reverse_lexicographic(evict_g, Configs.BUCKET_COUNT, Configs.HEIGHT));
 			evict_g = (evict_g + 1) % Configs.LEAF_COUNT;
 		}
