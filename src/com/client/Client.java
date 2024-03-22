@@ -404,14 +404,14 @@ public class Client implements ClientInterface {
 	}
 
 	private void PrintStash_hit_rate_reference() {
-		Double hit_ratio = get_hit_count() / 21.0 * 100.0;
+		Double hit_ratio = get_hit_count() / 20.0 * 100.0;
 		System.out.println("Stash hit rate is " + hit_ratio + " %");
 	}
 
 	public static void main(String[] args) {
 		Random rand = new Random();
 		int hit_ratio = 30;
-		int block_id = 0;
+		int block_id = rand.nextInt(10);
 		// TODO Auto-generated method stub
 		Client client = new Client();
 		client.initServer();
