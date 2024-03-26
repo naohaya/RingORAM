@@ -71,6 +71,7 @@ public class Stash {
 				block_list[start++] = block;
 				if (block.getBlockIndex() != 0) {
 					stash_hash.remove(block.getBlockIndex());
+					System.out.println("remove " + block.getBlockIndex() + " block");
 				}
 
 				for (int pos_run = bucket_id; pos_run >= 0; pos_run = (pos_run - 1) >> 1) {

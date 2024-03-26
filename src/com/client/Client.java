@@ -140,7 +140,7 @@ public class Client implements ClientInterface {
 		evict_count = (evict_count + 1) % Configs.SHUFFLE_RATE;
 		// evict count reaches shuffle rate, evict path
 		if (evict_count == 0) {
-			System.out.println("Do evict !");//Detect execution of evict path
+			System.out.println("Do evict !");// Detect execution of evict path
 			evict_path(math.gen_reverse_lexicographic(evict_g, Configs.BUCKET_COUNT, Configs.HEIGHT));
 			evict_g = (evict_g + 1) % Configs.LEAF_COUNT;
 		}
@@ -399,22 +399,18 @@ public class Client implements ClientInterface {
 		}
 	}
 
-	private int get_hit_count() {
-		return hit_count;
-	}
-
-	private void PrintStash_hit_rate_reference() {
-		Double hit_ratio = get_hit_count() / 20.0 * 100.0;
-		System.out.println("Stash hit rate is " + hit_ratio + " %");
+	private void PrintStash_hit_count_reference() {
+		System.out.println("Stash hit count = " + hit_count);
 	}
 
 	public static void main(String[] args) {
 		Random rand = new Random();
-		int hit_ratio = 30;
+		Double hit_ratio = 0.3;
 		int block_id = rand.nextInt(10);
 		// TODO Auto-generated method stub
 		Client client = new Client();
 		client.initServer();
+		long startTime = System.currentTimeMillis();// Start measurement
 		for (int i = 0; i < 10; i++) {
 			byte[] data = new byte[Configs.BLOCK_DATA_LEN];
 			Arrays.fill(data, (byte) i);
@@ -422,12 +418,12 @@ public class Client implements ClientInterface {
 		}
 		byte[] newdata = new byte[Configs.BLOCK_DATA_LEN];
 		Arrays.fill(newdata, (byte) 12);
-		client.oblivious_access(3, OPERATION.ORAM_ACCESS_WRITE, newdata);
+		client.oblivious_access(rand.nextInt(10), OPERATION.ORAM_ACCESS_WRITE, newdata);
 		for (int i = 0; i < 10; i++) {
 			block_id = rand.nextInt(10);// Assigning the first block id
 			byte[] data = new byte[Configs.BLOCK_DATA_LEN];
 			// Arrays.fill(data, (byte)1);
-			if (rand.nextInt(100) < hit_ratio) {// 30 chance of stash hit
+			if (rand.nextDouble() < hit_ratio) {// 30 chance of stash hit
 				while (!client.IsinStash(block_id)) {// Reassigned if not in stash
 					block_id = rand.nextInt(10);
 				}
@@ -447,7 +443,9 @@ public class Client implements ClientInterface {
 				System.out.println("can't find block " + i + " in server storage");
 			}
 		}
-		client.PrintStash_hit_rate_reference();// print stash hit rate
+		long endTime = System.currentTimeMillis();
+		System.out.println("処理時間 = " + (endTime - startTime) + " ms");// Measuring processing time
+		client.PrintStash_hit_count_reference();
 		client.close(); // close the ThreadExecutor.
 	}
 
