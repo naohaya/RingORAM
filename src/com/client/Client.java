@@ -405,8 +405,8 @@ public class Client implements ClientInterface {
 
 	public static void main(String[] args) {
 		Random rand = new Random();
-		Double hit_ratio = 0.3;
-		int block_id = rand.nextInt(10);
+		Double hit_ratio = 0.3;// hit rate
+		int block_id = rand.nextInt(10);// Setting initial value of block id
 		// TODO Auto-generated method stub
 		Client client = new Client();
 		client.initServer();
