@@ -418,7 +418,7 @@ public class Client implements ClientInterface {
 		}
 		byte[] newdata = new byte[Configs.BLOCK_DATA_LEN];
 		Arrays.fill(newdata, (byte) 12);
-		client.oblivious_access(rand.nextInt(10), OPERATION.ORAM_ACCESS_WRITE, newdata);
+		// client.oblivious_access(rand.nextInt(10), OPERATION.ORAM_ACCESS_WRITE,newdata);
 		for (int i = 0; i < 10; i++) {
 			block_id = rand.nextInt(10);// Assigning the first block id
 			byte[] data = new byte[Configs.BLOCK_DATA_LEN];
