@@ -16,6 +16,8 @@ public class Configs {
 	public static int DUMMY_BLOCK_COUNT = 6;
 	//total bucket count in the tree, must be full binary tree
 	public static int BUCKET_COUNT = 14;
+	//LRUCache's capacity
+	public static int capacity = 3;
 	
 	//total block count in bucket
 	public static int Z = REAL_BLOCK_COUNT + DUMMY_BLOCK_COUNT;

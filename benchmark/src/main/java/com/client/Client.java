@@ -38,6 +38,7 @@ public class Client implements ClientInterface{
 		this.stash = new Stash();
 		this.seria = new ByteSerialize();
 		this.math = new MathUtility();
+		stash.setTable();
 		//when initializing, assign all block a random path id
 		for(int i=0;i<Configs.BLOCK_COUNT;i++){
 			this.position_map[i] = math.getRandomLeaf() + Configs.LEAF_START;

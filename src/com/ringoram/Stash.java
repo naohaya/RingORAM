@@ -1,10 +1,6 @@
 package com.ringoram;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Random;
+import java.util.*;
 
 /*
  * stash in the client
@@ -12,10 +8,11 @@ import java.util.Random;
  * @param stash_list: relate block to bucket
  * @param counter: block count that can place into bucket
  */
-public class Stash {
+public class Stash{
 	private Map<Integer, Block> stash_hash;
 	private List<List<Block>> stash_list;
 	private int[] counter;
+	Map<Integer, String> cache = new LinkedHashMap<>(15, 0.75f, true);
 
 	public Stash() {
 		this.counter = new int[Configs.BUCKET_COUNT];
@@ -31,6 +28,7 @@ public class Stash {
 		if (!stash_hash.containsKey(blk.getBlockIndex())) {
 			stash_hash.put(blk.getBlockIndex(), blk);
 			stash_list.get(blk.getLeaf_id()).add(blk);
+			cache.put(blk.getBlockIndex(), "1");
 			for (int pos = blk.getLeaf_id(); pos >= 0; pos = (pos - 1) >> 1) {
 				// bucket in path counter++ because the block can place into this bucket
 				counter[pos]++;
@@ -136,8 +134,21 @@ public class Stash {
 	}
 
 	public void showStash() {
+		System.out.println();
 		for (Integer key : stash_hash.keySet()) {
 			System.out.println(key + " block in the stash");
 		}
+		System.out.println();
 	}
+	public void get(Integer index){
+		cache.get(index);
+	}
+	public static <K, V> K replace(Map<K, V> map, V value) {
+        for (Map.Entry<K, V> entry : map.entrySet()) {
+            if (value.equals(entry.getValue())) {
+                return entry.getKey();
+            }
+        }
+        return null;
+    }
 }
