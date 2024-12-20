@@ -9,7 +9,7 @@ import java.util.*;
  * @param counter: block count that can place into bucket
  */
 public class Stash {
-    private static final int CACHE_CAPACITY = 2; // LRUキャッシュの最大容量を設定
+    private static final int CACHE_CAPACITY = 3; // LRUキャッシュの最大容量を設定
     private Map<Integer, Block> stash_hash;
     private List<List<Block>> stash_list;
     private int[] counter;
