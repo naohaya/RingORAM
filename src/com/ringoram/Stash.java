@@ -9,21 +9,21 @@ import java.util.*;
  * @param counter: block count that can place into bucket
  */
 public class Stash {
-    private static final int CACHE_CAPACITY = 3; // LRUキャッシュの最大容量を設定
+    private static final int CACHE_CAPACITY = 6; // LRUキャッシュの最大容量を設定
     private Map<Integer, Block> stash_hash;
     private List<List<Block>> stash_list;
     private int[] counter;
-    private List<Block> removedBlocks; // 削除されたブロックの履歴
 
     public Stash() {
         this.counter = new int[Configs.BUCKET_COUNT];
-        this.removedBlocks = new ArrayList<>();
+
         // LRUキャッシュを保持する LinkedHashMap
         this.stash_hash = new LinkedHashMap<Integer, Block>(CACHE_CAPACITY, 0.75f, true) {
             @Override
             protected boolean removeEldestEntry(Map.Entry<Integer, Block> eldest) {
                 if (size() > CACHE_CAPACITY) {
-                    removedBlocks.add(eldest.getValue()); // 削除されたブロックを記録
+                    System.out.println("Evicting block " + eldest.getKey() + "...");
+                    removeBlockById(eldest.getKey());
                     return true;
                 }
                 return false;
@@ -36,7 +36,24 @@ public class Stash {
             this.stash_list.add(bucket_i);
         }
     }
+    public Boolean  removeBlockById(int blockId) {
+        if (!stash_hash.containsKey(blockId)) {
+            return false;
+        }
+        Block block = stash_hash.remove(blockId);
 
+        // スタッシュリストからもブロックを削除
+        int leaf_id = block.getLeaf_id();
+        stash_list.get(leaf_id).remove(block);
+
+        // カウンターを更新
+        for (int pos = leaf_id; pos >= 0; pos = (pos - 1) >> 1) {
+            counter[pos]--;
+            if (pos == 0)
+                break;
+        }
+        return true;
+    }
     public void add(Block blk) {
         if (!stash_hash.containsKey(blk.getBlockIndex())) {
             stash_hash.put(blk.getBlockIndex(), blk);
@@ -75,11 +92,11 @@ public class Stash {
             delete_max = min(delete_now, len);
             for (int j = 0; j < delete_max; j++) {
                 block = stash_list.get(bucket_id).get(0);
-                if (block.getBlockIndex() != 0) {
+                if (block.getBlockIndex() != 4) {
                     stash_list.get(bucket_id).remove(0);
                 }
                 block_list[start++] = block;
-                if (block.getBlockIndex() != 0) {
+                if (block.getBlockIndex() != 4) {
                     stash_hash.remove(block.getBlockIndex());
                 }
                 for (int pos_run = bucket_id; pos_run >= 0; pos_run = (pos_run - 1) >> 1) {
@@ -141,10 +158,6 @@ public class Stash {
         this.counter = counter;
     }
 
-    public List<Block> getRemovedBlocks() {
-        return removedBlocks;
-    }
-
     public void showStash() {
         System.out.println();
         for (Integer key : stash_hash.keySet()) {
@@ -152,4 +165,5 @@ public class Stash {
         }
         System.out.println();
     }
+    
 }

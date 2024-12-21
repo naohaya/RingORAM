@@ -405,49 +405,51 @@ public class Client implements ClientInterface {
 
 	public static void main(String[] args) {
 		Random rand = new Random();
-		int hit_ratio = 30;// hit rate
 		int repetition = 100;
-		int block_id = rand.nextInt(10);// Setting initial value of block id
+		int stash_hit_ratio = 90;
+		int blockid = 0;
+
 		// TODO Auto-generated method stub
 		Client client = new Client();
 		client.initServer();
+
+		// preparation (write something)
 		for (int i = 0; i < 10; i++) {
 			byte[] data = new byte[Configs.BLOCK_DATA_LEN];
 			Arrays.fill(data, (byte) i);
 			client.oblivious_access(i, OPERATION.ORAM_ACCESS_WRITE, data);
 		}
+
 		byte[] newdata = new byte[Configs.BLOCK_DATA_LEN];
 		Arrays.fill(newdata, (byte) 12);
-		client.oblivious_access(rand.nextInt(10), OPERATION.ORAM_ACCESS_WRITE,newdata);
-		for (int i = 0; repetition < 10; i++) {
-			block_id = rand.nextInt(10);// Assigning the first block id
+		client.oblivious_access(3, OPERATION.ORAM_ACCESS_WRITE, newdata);
+		for (int i = 0; i < repetition; i++) {
 			byte[] data = new byte[Configs.BLOCK_DATA_LEN];
 			// Arrays.fill(data, (byte)1);
-			if (rand.nextInt(100) < hit_ratio) {// 30 chance of stash hit
-				while (!client.IsinStash(block_id)) {// Reassigned if not in stash
-					block_id = rand.nextInt(10);
-				}
+			blockid = rand.nextInt(10);
+			if (rand.nextInt(100) < stash_hit_ratio) {
+				// stash hit
+				while (!client.IsinStash(blockid))
+					blockid = rand.nextInt(10);
+
 			} else {
-				while (client.IsinStash(block_id)) {// 70 chance of stash hit
-					block_id = rand.nextInt(10);// Reassigned if in stash
-				}
+				// stash hit miss
+				while (client.IsinStash(blockid))
+					blockid = rand.nextInt(10);
 			}
-			data = client.oblivious_access(rand.nextInt(10), OPERATION.ORAM_ACCESS_READ, data);
-			//while(data == null){
-			//	data = client.oblivious_access(rand.nextInt(10), OPERATION.ORAM_ACCESS_READ, data);
-			//}
+			data = client.oblivious_access(blockid, OPERATION.ORAM_ACCESS_READ, data);
 			if (data != null) {
-				System.out.println("block " + i + " data:");
+					System.out.println("block " + blockid + " data:");
 				for (int j = 0; j < Configs.BLOCK_DATA_LEN; j++) {
 					System.out.print(data[j] + " ");
 				}
-				System.out.println();
-			}else {
-				System.out.println("can't find block " + i + " in server storage");
+			} else {
+				System.out.println("can't find block " + blockid + " in server storage");
 			}
 		}
-		client.PrintStash_hit_count_reference();
 		client.close(); // close the ThreadExecutor.
+		System.out.println();
+		client.PrintStash_hit_count_reference();
 	}
 
 }
