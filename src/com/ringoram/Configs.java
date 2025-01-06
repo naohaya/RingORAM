@@ -5,7 +5,7 @@ public class Configs {
 	public static int THREAD_FIXED = 4;
 
 	// server host name and port
-	public static String SERVER_HOSTNAME = "localhost";
+	public static String SERVER_HOSTNAME = "10.0.2.16";
 	public static int SERVER_PORT = 12339;
 	
 	//block data length

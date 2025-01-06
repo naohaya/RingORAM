@@ -15,7 +15,6 @@ import java.util.Random;
 public class Stash {
 	private Map<Integer, Block> stash_hash;
 	private List<List<Block>> stash_list;
-	private Map<Integer, Boolean> table = new HashMap<>();
 	private int[] counter;
 
 	public Stash() {
@@ -135,15 +134,6 @@ public class Stash {
 	public void setCount(int[] counter) {
 		this.counter = counter;
 	}
-	public void setTable(){
-		for(int i = 0; i < 10; i++){
-			table.put(i, false);
-		}
-	}
-	public Boolean TableCheck(int num){
-		return table.get(num);
-	}
-
 	public void showStash() {
 		System.out.println();
 		for (Integer key : stash_hash.keySet()) {
@@ -151,5 +141,4 @@ public class Stash {
 		}
 		System.out.println();
 	}
-	
 }

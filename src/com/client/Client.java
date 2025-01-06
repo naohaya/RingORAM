@@ -6,7 +6,6 @@ import java.nio.ByteBuffer;
 import java.nio.channels.AsynchronousChannelGroup;
 import java.nio.channels.AsynchronousSocketChannel;
 import java.util.Arrays;
-import java.util.Random;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
@@ -27,7 +26,7 @@ public class Client implements ClientInterface {
 	private int evict_count;
 	private int evict_g;
 	private int[] position_map;
-	int hit_count = 0;
+
 	Stash stash;
 	ByteSerialize seria;
 	MathUtility math;
@@ -106,10 +105,9 @@ public class Client implements ClientInterface {
 			read_path(position, blockIndex);
 			// find block from the stash
 			block = stash.find_by_blockIndex(blockIndex);
-			System.out.println("read from the server " + blockIndex + " block");
-		} else {
-			System.out.println("stash hits! : " + blockIndex);
-			hit_count++;
+			System.out.println("read from the server "+ blockIndex + " block");
+		}else{
+			System.out.println("stash hits!");
 		}
 
 		if (op == OPERATION.ORAM_ACCESS_WRITE) {
@@ -140,7 +138,6 @@ public class Client implements ClientInterface {
 		evict_count = (evict_count + 1) % Configs.SHUFFLE_RATE;
 		// evict count reaches shuffle rate, evict path
 		if (evict_count == 0) {
-			System.out.println("Do evict !");// Detect execution of evict path
 			evict_path(math.gen_reverse_lexicographic(evict_g, Configs.BUCKET_COUNT, Configs.HEIGHT));
 			evict_g = (evict_g + 1) % Configs.LEAF_COUNT;
 		}
@@ -390,66 +387,35 @@ public class Client implements ClientInterface {
 		}
 		return responseBytes;
 	}
-
-	private boolean IsinStash(int block_index) {
-		if (stash.find_by_blockIndex(block_index) == null) {
-			return false;
-		} else {
-			return true;
-		}
-	}
-
-	private void PrintStash_hit_count_reference() {
-		System.out.println("Stash hit count = " + hit_count);
-	}
+	
 
 	public static void main(String[] args) {
-		Random rand = new Random();
-		int repetition = 100;
-		int stash_hit_ratio = 90;
-		int blockid = 0;
-
 		// TODO Auto-generated method stub
+		int repetition = 100;
 		Client client = new Client();
 		client.initServer();
-
-		// preparation (write something)
 		for (int i = 0; i < 10; i++) {
 			byte[] data = new byte[Configs.BLOCK_DATA_LEN];
 			Arrays.fill(data, (byte) i);
 			client.oblivious_access(i, OPERATION.ORAM_ACCESS_WRITE, data);
 		}
-
 		byte[] newdata = new byte[Configs.BLOCK_DATA_LEN];
 		Arrays.fill(newdata, (byte) 12);
 		client.oblivious_access(3, OPERATION.ORAM_ACCESS_WRITE, newdata);
 		for (int i = 0; i < repetition; i++) {
 			byte[] data = new byte[Configs.BLOCK_DATA_LEN];
 			// Arrays.fill(data, (byte)1);
-			blockid = rand.nextInt(10);
-			if (rand.nextInt(100) < stash_hit_ratio) {
-				// stash hit
-				while (!client.IsinStash(blockid))
-					blockid = rand.nextInt(10);
-
-			} else {
-				// stash hit miss
-				while (client.IsinStash(blockid))
-					blockid = rand.nextInt(10);
-			}
-			data = client.oblivious_access(blockid, OPERATION.ORAM_ACCESS_READ, data);
+			data = client.oblivious_access(i, OPERATION.ORAM_ACCESS_READ, data);
 			if (data != null) {
-					System.out.println("block " + blockid + " data:");
+				System.out.println("block " + i + " data:");
 				for (int j = 0; j < Configs.BLOCK_DATA_LEN; j++) {
 					System.out.print(data[j] + " ");
 				}
+				System.out.println();
 			} else {
-				System.out.println("can't find block " + blockid + " in server storage");
+				System.out.println("can't find block " + i + " in server storage");
 			}
 		}
 		client.close(); // close the ThreadExecutor.
-		System.out.println();
-		client.PrintStash_hit_count_reference();
 	}
-
 }
