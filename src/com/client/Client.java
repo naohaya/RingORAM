@@ -9,13 +9,12 @@ import java.util.Arrays;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
+import java.util.Random;
 
 import com.google.common.primitives.Bytes;
 import com.google.common.primitives.Ints;
 import com.ringoram.*;
 import com.ringoram.Configs.OPERATION;
-
-import java.util.Random; 
 
 public class Client implements ClientInterface{
 
@@ -28,9 +27,6 @@ public class Client implements ClientInterface{
 	private int evict_count;
 	private int evict_g;
 	private int[] position_map;
-	private int stash_hit_counter = 0;
-
-	private boolean debug = false;
 	
 	Stash stash;
 	ByteSerialize seria;
@@ -56,8 +52,7 @@ public class Client implements ClientInterface{
 			mChannel = AsynchronousSocketChannel.open(mThreadGroup);
 			Future connection = mChannel.connect(serverAddress);
 			connection.get();
-			if(debug)
-				System.out.println("client connect to server successful!!");
+			System.out.println("client connect to server successful!!");
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -66,8 +61,7 @@ public class Client implements ClientInterface{
 	public void initServer(){
 		ByteBuffer header = MessageUtility.createMessageHeaderBuffer(MessageUtility.ORAM_INIT, 0);
 		byte[] responseBytes = sendAndGetMessage(header, MessageUtility.ORAM_INIT);
-		if(debug)
-			System.out.println("client INIT server successful!" + responseBytes[0]);
+		System.out.println("client INIT server successful!" + responseBytes[0]);
 		responseBytes = null;
 	}
 
@@ -92,9 +86,7 @@ public class Client implements ClientInterface{
 	 */
 	public byte[] oblivious_access(int blockIndex, OPERATION op, byte[] newdata){
 		requestID ++;
-		if(debug)
-			System.out.println("Process request "+requestID+" for block: "+blockIndex);
-		Block block = null; 
+		System.out.println("Process request "+requestID);
 		
 		byte[] readData = null;//return data
 		
@@ -103,19 +95,10 @@ public class Client implements ClientInterface{
 		int position_new = math.getRandomLeaf() + Configs.LEAF_START;
 		position_map[blockIndex] = position_new;
 		
-		block = stash.find_by_blockIndex(blockIndex);
-		if (block == null) {
-			//read block from server, and insert into the stash
-			read_path(position, blockIndex);
-			//find block from the stash
-			block = stash.find_by_blockIndex(blockIndex);
-			if(debug)
-				System.out.println("read from the server: " + blockIndex);
-		} else {
-			if(debug)
-				System.out.println("Stash hit!!!");
-			stash_hit_counter ++;
-		}
+		//read block from server, and insert into the stash
+		read_path(position, blockIndex);
+		//find block from the stash
+		Block block = stash.find_by_blockIndex(blockIndex);
 		
 		if(op == OPERATION.ORAM_ACCESS_WRITE){
 			if(block==null){//not in the stash
@@ -135,23 +118,14 @@ public class Client implements ClientInterface{
 		}
 		if(op == OPERATION.ORAM_ACCESS_READ){
 			if(block != null){//find block in the stash or servere
-				if(debug)
-					System.out.println("when read block "+blockIndex+" find block in the stash.");
+				System.out.println("when read block "+blockIndex+" find block in the stash.");
 				readData = block.getData();
 			}
 		}
 		
-		evict_count = (evict_count+1)%Configs.SHUFFLE_RATE+10;
-		//evict_count = 1;
-
+		evict_count = (evict_count+1)%Configs.SHUFFLE_RATE;
 		//evict count reaches shuffle rate, evict path
 		if(evict_count == 0){
-			
-			//avoiding the path eviction of pos 0 for the experiment
-			if (evict_g == 0) {
-				evict_g++;
-			}
-
 			evict_path(math.gen_reverse_lexicographic(evict_g, Configs.BUCKET_COUNT, Configs.HEIGHT));
 			evict_g = (evict_g+1)%Configs.LEAF_COUNT;
 		}
@@ -160,9 +134,6 @@ public class Client implements ClientInterface{
 		BucketMetadata[] meta_list = get_metadata(position);
 		early_reshuffle(position, meta_list);
 		
-		// debug output in stash
-		stash.showStash();
-
 		return readData;
 	}
 	
@@ -340,8 +311,7 @@ public class Client implements ClientInterface{
 		//shuffle bucket in the path
 		for (int pos_run = pathID, i = 0;pos_run>=0;pos_run = (pos_run - 1) >> 1, i++) {
 	        if (meta_list[i].getRead_counter() >= (Configs.DUMMY_BLOCK_COUNT-2)) {
-				if(debug)
-		           System.out.println("early reshuffle in pos " +pos_run );
+	           System.out.println("early reshuffle in pos " +pos_run );
 	            read_bucket(pos_run);
 	            write_bucket(pos_run);
 	        }
@@ -402,73 +372,37 @@ public class Client implements ClientInterface{
 		}
 		return responseBytes;
 	}
-
-	private boolean isInStash(int blockIndex) {
-		if (stash.find_by_blockIndex(blockIndex) != null)
-			return true;
-		else 
-			return false;
-	}
-
-	private void PrintStash_hit_count_reference(){
-		System.out.println("Stash hit: " + stash_hit_counter);
-	}
-
 	public static void main(String[] args) {
-		boolean debug = false;
-		Random rand = new Random();
-		int iteration = 100;
-		int stash_hit_ratio = 30;
+		int iterarion = 100;
 		int blockid = 0;
-
+		Random rand = new Random();
 		// TODO Auto-generated method stub
 		Client client = new Client();
 		client.initServer();
-
-		// preparation (write something)
 		for(int i=0;i<10;i++){
 			byte[] data = new byte[Configs.BLOCK_DATA_LEN];
 			Arrays.fill(data, (byte)i);
 			client.oblivious_access(i, OPERATION.ORAM_ACCESS_WRITE, data);
 		}
-
-
 		byte[] newdata = new byte[Configs.BLOCK_DATA_LEN];
 		Arrays.fill(newdata, (byte)12);
 		client.oblivious_access(3, OPERATION.ORAM_ACCESS_WRITE, newdata);
-		for(int i=0;i<iteration;i++){
+		for(int i=0;i<iterarion;i++){
 			byte[] data = new byte[Configs.BLOCK_DATA_LEN];
 			//Arrays.fill(data, (byte)1);
 			blockid = rand.nextInt(10);
-
-			if (rand.nextInt(100) < stash_hit_ratio) {
-				// stash hit
-				while(!client.isInStash(blockid))
-					blockid = rand.nextInt(10);
-				
-			}
-			else {
-				// stash hit miss
-				while(client.isInStash(blockid))
-					blockid = rand.nextInt(10);
-			}
 			data = client.oblivious_access(blockid, OPERATION.ORAM_ACCESS_READ, data);
 			if(data != null){
-				if(debug)
-					System.out.println("block "+blockid+" data:");
+				//System.out.println("block "+blockid+" data:");
 				for(int j=0;j<Configs.BLOCK_DATA_LEN;j++){
-					if(debug)
-						System.out.print(data[j]+" ");
+					//System.out.print(data[j]+" ");
 				}
-				if(debug)
-					System.out.println();
+				//System.out.println();
 			}else{
-				if(debug)
-					System.out.println("can't find block "+blockid+" in server storage");
+				//System.out.println("can't find block "+blockid+" in server storage");
 			}
 		}
 		client.close(); // close the ThreadExecutor.
-		client.PrintStash_hit_count_reference();
 	}
 
 }
