@@ -86,7 +86,8 @@ public class Client implements ClientInterface{
 	 */
 	public byte[] oblivious_access(int blockIndex, OPERATION op, byte[] newdata){
 		requestID ++;
-		System.out.println("Process request "+requestID);
+		Block block = null;
+		//System.out.println("Process request "+requestID);
 		
 		byte[] readData = null;//return data
 		
@@ -94,11 +95,16 @@ public class Client implements ClientInterface{
 		int position = position_map[blockIndex];
 		int position_new = math.getRandomLeaf() + Configs.LEAF_START;
 		position_map[blockIndex] = position_new;
-		
-		//read block from server, and insert into the stash
-		read_path(position, blockIndex);
-		//find block from the stash
-		Block block = stash.find_by_blockIndex(blockIndex);
+		block = stash.find_by_blockIndex(blockIndex);
+		if (block == null) {
+			// read block from server, and insert into the stash
+			read_path(position, blockIndex);
+			// find block from the stash
+			block = stash.find_by_blockIndex(blockIndex);
+			//System.out.println("read from the server " + blockIndex + " block");
+		} else {
+			//System.out.println("stash hits! : " + blockIndex);
+		}
 		
 		if(op == OPERATION.ORAM_ACCESS_WRITE){
 			if(block==null){//not in the stash
@@ -118,7 +124,7 @@ public class Client implements ClientInterface{
 		}
 		if(op == OPERATION.ORAM_ACCESS_READ){
 			if(block != null){//find block in the stash or servere
-				System.out.println("when read block "+blockIndex+" find block in the stash.");
+				//System.out.println("when read block "+blockIndex+" find block in the stash.");
 				readData = block.getData();
 			}
 		}

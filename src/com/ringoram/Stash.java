@@ -92,13 +92,13 @@ public class Stash {
             delete_max = min(delete_now, len);
             for (int j = 0; j < delete_max; j++) {
                 block = stash_list.get(bucket_id).get(0);
-                if (block.getBlockIndex() != 4) {
+                /*if (block.getBlockIndex() != 4) {
                     stash_list.get(bucket_id).remove(0);
-                }
+                }*/
                 block_list[start++] = block;
-                if (block.getBlockIndex() != 4) {
+                /*if (block.getBlockIndex() != 4) {
                     stash_hash.remove(block.getBlockIndex());
-                }
+                }*/
                 for (int pos_run = bucket_id; pos_run >= 0; pos_run = (pos_run - 1) >> 1) {
                     counter[pos_run]--;
                     if (pos_run == 0)
