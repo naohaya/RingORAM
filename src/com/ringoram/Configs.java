@@ -15,9 +15,7 @@ public class Configs {
 	//the min dummy block count in the bucket
 	public static int DUMMY_BLOCK_COUNT = 6;
 	//total bucket count in the tree, must be full binary tree
-	public static int BUCKET_COUNT = 14;
-	//LRUCache's capacity
-	public static int capacity = 3;
+	public static int BUCKET_COUNT = 7;
 	
 	//total block count in bucket
 	public static int Z = REAL_BLOCK_COUNT + DUMMY_BLOCK_COUNT;
@@ -27,7 +25,6 @@ public class Configs {
 	public static int HEIGHT = (int) (Math.log(BUCKET_COUNT)/Math.log(2) + 1);
 	//total leaf count in the tree
 	public static int LEAF_COUNT = (BUCKET_COUNT+1)/2;
-	
 	//leaf start index in tree node(root is 0)
 	public static int LEAF_START = BUCKET_COUNT - LEAF_COUNT;
 	

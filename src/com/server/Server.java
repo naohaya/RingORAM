@@ -144,6 +144,7 @@ public class Server {
 					meta_2d_bytes = null;
 					meta_bytes = null;
 				}
+				
 				if(type == MessageUtility.ORAM_READBLOCK){//read block
 					System.out.println("server processes READBLOCK request.");
 					byte[] pos_bytes = new byte[4];
@@ -176,7 +177,8 @@ public class Server {
 					responseHeader = MessageUtility.createMessageHeaderBytes(
 							MessageUtility.ORAM_READBLOCK, serializedResponse.length);
 					
-					responseBytes = null;				
+					responseBytes = null;
+
 				}
 				if(type == MessageUtility.ORAM_READBUCKET){//read bucket
 					byte[] bucket_id_bytes = new byte[4];
@@ -207,6 +209,7 @@ public class Server {
 					bucket = null;
 					responseBytes = null;
 				}
+
 				// send response to client
 				ByteBuffer responseMessage = ByteBuffer.wrap(Bytes.concat(responseHeader, serializedResponse));
 				while (responseMessage.remaining() > 0) {

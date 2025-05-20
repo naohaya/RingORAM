@@ -1,5 +1,40 @@
 package com.ringoram;
 
+/*public class Block {
+	private BlockHeader header;
+	private BlockBody body;
+
+	public Block() {
+		this.header = new BlockHeader();
+		this.body = new BlockBody();
+	}
+
+	public Block(BlockHeader header, BlockBody body) {
+		this.header = header;
+		this.body = body;
+	}
+
+	public Block(int blockIndex, int leafId, byte[] data) {
+		this.header = new BlockHeader(blockIndex, leafId);
+		this.body = new BlockBody(data);
+	}
+
+	public BlockHeader getHeader() {
+		return header;
+	}
+
+	public void setHeader(BlockHeader header) {
+		this.header = header;
+	}
+
+	public BlockBody getBody() {
+		return body;
+	}
+
+	public void setBody(BlockBody body) {
+		this.body = body;
+	}
+}*/
 public class Block {
 	private int blockIndex;//block unique index
 	private int leaf_id;//block path id
